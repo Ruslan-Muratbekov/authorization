@@ -4,13 +4,13 @@ const uuid = require("uuid");
 const Dtos = require("../dtos");
 const TokenServices = require('../services/tokens-services')
 const MailerServices = require('../services/mailer-services')
-const TokenSchema = require('../model/token-services')
+const ApiError = require('../exceptions/api-error')
 
 class UserServices {
 	async registration(email, password) {
 		const candidate = await UserSchema.findOne({email})
 		if (candidate) {
-			throw new Error('Такой аккаунт уже зарегистрирован!')
+			throw ApiError.BadRequest('Такой аккаунт уже зарегистрирован!')
 		}
 		const hashPassword = await bcrypt.hash(password, 8)
 		const activatedLink = uuid.v4()
@@ -34,7 +34,7 @@ class UserServices {
 	async activate(activatedLink) {
 		const user = await UserSchema.findOne({activatedLink})
 		if(!user){
-			throw new Error('Ошибка неверная ссылка')
+			throw ApiError.BadRequest('Ошибка неверная ссылка')
 		}
 		user.isActivated = true
 		await user.save()

@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
+const errorMiddleware = require('./middlewares/error-middleware')
 
 const userRouter = require('./router/index')
 
@@ -13,7 +14,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
 app.use('/api', userRouter)
-// app.use()
+app.use(errorMiddleware)
 
 const start = async () => {
 	try {
