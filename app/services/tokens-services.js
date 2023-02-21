@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const TokenSchema = require('../model/token-services')
+const TokenSchema = require('../model/token-schema')
 
 class TokensServices {
 	generateTokens(payload) {
@@ -19,6 +19,34 @@ class TokensServices {
 		}
 		const token = await TokenSchema.create({user: userId, refreshToken})
 		return token
+	}
+
+	async removeToken(refreshToken){
+		const tokenData = await TokenSchema.deleteOne({refreshToken})
+		return tokenData
+	}
+
+	validateAccessToken(token){
+		try {
+			const userData = jwt.verify(token, process.env.SECRET_KEY_ACCESS)
+			return userData
+		}catch (e) {
+			return null
+		}
+	}
+
+	validateRefreshToken(token){
+		try {
+			const userData = jwt.verify(token, process.env.SECRET_KEY_REFRESH)
+			return userData
+		}catch (e) {
+			return null
+		}
+	}
+
+	async findToken(refreshToken){
+		const tokenData = await TokenSchema.findOne({refreshToken})
+		return tokenData
 	}
 }
 
