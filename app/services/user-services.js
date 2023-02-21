@@ -71,7 +71,8 @@ class UserServices {
 	}
 
 	async getUsers() {
-
+		const users = await UserSchema.find()
+		return users
 	}
 }
 
